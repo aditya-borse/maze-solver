@@ -15,18 +15,18 @@ struct cell
     int col;
 };
 
-int dr[] = {-1, 1, 0, 0}; 
-int dc[] = {0, 0, -1, 1}; 
+int dr[] = {-1, 1, 0, 0};
+int dc[] = {0, 0, -1, 1};
 
 bool isValid(int row, int col, char maze[MAX_SIZE][MAX_SIZE], int r, int c)
 {
     return (row >= 0 && row < r && col >= 0 && col < c && maze[row][col] != '#');
 }
 
-bool solveMaze(char maze[MAX_SIZE][MAX_SIZE], int r, int c)
+bool solveMaze(char maze[MAX_SIZE][MAX_SIZE], int r, int c, int sr, int sc)
 {
     stack<cell> stack;
-    cell start = {0, 0};
+    cell start = {sr, sc};
     stack.push(start);
     while (!stack.empty())
     {
@@ -37,7 +37,14 @@ bool solveMaze(char maze[MAX_SIZE][MAX_SIZE], int r, int c)
             maze[current.row][current.col] = 'X';
             return true;
         }
-        maze[current.row][current.col] = 'V'; 
+        else if (maze[current.row][current.col] == 'S')
+        {
+            maze[current.row][current.col] = 'S';
+        }
+        else
+        {
+            maze[current.row][current.col] = 'V';
+        }
         for (int i = 0; i < 4; i++)
         {
             int newrow = current.row + dr[i];
@@ -82,16 +89,13 @@ void drawMaze(char maze[MAX_SIZE][MAX_SIZE], int r, int c)
                     cellShape.setFillColor(sf::Color::Red);
                     break;
                 case '#':
-                    cellShape.setFillColor(sf::Color(139, 69, 19)); 
-                    break;
-                case ' ':
-                    cellShape.setFillColor(sf::Color::Green);
+                    cellShape.setFillColor(sf::Color(139, 69, 19));
                     break;
                 case 'V':
-                    cellShape.setFillColor(sf::Color::Green); 
+                    cellShape.setFillColor(sf::Color::Green);
                     break;
                 case 'X':
-                    cellShape.setFillColor(sf::Color::Green);
+                    cellShape.setFillColor(sf::Color::Red);
                     break;
                 default:
                     cellShape.setFillColor(sf::Color::White);
@@ -110,11 +114,11 @@ void drawMaze(char maze[MAX_SIZE][MAX_SIZE], int r, int c)
 int main()
 {
     int r = 5, c = 5;
-    char maze[MAX_SIZE][MAX_SIZE] = { {'S', '#', '#', '#', '#'},
-                                      {' ', ' ', '#', '#', '#'},
-                                      {'#', ' ', '#', '#', '#'},
-                                      {'#', ' ', ' ', ' ', '#'},
-                                      {'#', '#', '#', 'E', '#'} };
+    char maze[MAX_SIZE][MAX_SIZE] = {{'#', '#', '#', '#', '#'},
+                                     {'S', ' ', '#', '#', '#'},
+                                     {'#', ' ', '#', '#', '#'},
+                                     {'#', ' ', ' ', ' ', '#'},
+                                     {'#', '#', '#', 'E', '#'}};
 
     cout << "Maze before solving: " << endl;
     for (int i = 0; i < r; i++)
@@ -126,7 +130,7 @@ int main()
         cout << endl;
     }
 
-    if (solveMaze(maze, r, c))
+    if (solveMaze(maze, r, c, 1, 0))
     {
         cout << "Maze after solving: " << endl;
         for (int i = 0; i < r; i++)
